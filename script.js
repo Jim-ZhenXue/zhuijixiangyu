@@ -64,7 +64,7 @@ function initGame() {
     
     // 更新显示
     timeDisplay.textContent = `时间: 0.00 秒`;
-    distanceDisplay.textContent = `距离: ${gameState.initialDistance.toFixed(0)} 像素`;
+    distanceDisplay.textContent = `距离: ${gameState.initialDistance.toFixed(0)}`;
     
     // 绘制初始状态
     drawScene();
@@ -119,7 +119,7 @@ function gameLoop(timestamp) {
     // 更新显示
     if (!gameState.hasMet) {
         timeDisplay.textContent = `时间: ${gameState.elapsedTime.toFixed(2)} 秒`;
-        distanceDisplay.textContent = `距离: ${Math.max(0, currentDistance).toFixed(0)} 像素`;
+        distanceDisplay.textContent = `距离: ${Math.max(0, parseInt(currentDistance))}`;
     }
     
     // 绘制场景
@@ -212,7 +212,7 @@ function drawScene() {
             ctx.font = '12px Arial';
             ctx.fillStyle = '#2c3e50';
             ctx.textAlign = 'center';
-            ctx.fillText(`${distance.toFixed(0)} px`, midX, gameState.objectA.y - 40);
+            ctx.fillText(`${distance.toFixed(0)}`, midX, gameState.objectA.y - 40);
         }
     }
 }
