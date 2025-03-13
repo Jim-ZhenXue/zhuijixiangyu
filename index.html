@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>追击相遇问题</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>追击相遇问题模拟器</h1>
+        
+        <div class="game-controls">
+            <div class="control-group">
+                <label for="speed-a">红色车速度 (像素/秒):</label>
+                <input type="number" id="speed-a" value="100" min="10" max="500">
+            </div>
+            
+            <div class="control-group">
+                <label for="speed-b">蓝色车速度 (像素/秒):</label>
+                <input type="number" id="speed-b" value="150" min="10" max="500">
+            </div>
+            
+            <div class="control-group">
+                <label for="initial-distance">初始距离 (像素):</label>
+                <input type="number" id="initial-distance" value="500" min="100" max="800">
+            </div>
+            
+            <div class="button-group">
+                <button id="start-btn">开始模拟</button>
+                <button id="reset-btn">重置</button>
+            </div>
+        </div>
+        
+        <div class="game-info">
+            <div id="time-display">时间: 0.00 秒</div>
+            <div id="distance-display">距离: 0 像素</div>
+            <div id="prediction-display">预计相遇时间: 计算中...</div>
+        </div>
+        
+        <canvas id="game-canvas" width="900" height="400"></canvas>
+        
+        <div class="explanation">
+            <h2>追击相遇问题说明</h2>
+            <p>假设两辆车在同一直线上运动：</p>
+            <ul>
+                <li>红色车以恒定速度v<sub>1</sub>追赶蓝色车</li>
+                <li>蓝色车以恒定速度v<sub>2</sub>向前运动</li>
+                <li>初始时蓝色车在红色车的前方，距离为s</li>
+            </ul>
+            <p>如果v<sub>1</sub> > v<sub>2</sub>，红色车最终会追上蓝色车。相遇时间t = s/(v<sub>1</sub> - v<sub>2</sub>)</p>
+            <p>此模拟器可视化了这一过程，并实时计算相遇时间和位置。</p>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
