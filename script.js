@@ -36,7 +36,8 @@ let gameState = {
     },
     initialDistance: 0,
     predictedTime: 0,
-    hasMet: false
+    hasMet: false,
+    speedScale: 30 // 速度缩放因子，使较小的速度值在视觉上更明显
 };
 
 // 初始化游戏
@@ -46,25 +47,20 @@ function initGame() {
     gameState.hasMet = false;
     
     // 获取用户输入的参数
-    gameState.objectA.speed = parseFloat(speedAInput.value);
-    gameState.objectB.speed = parseFloat(speedBInput.value);
-    gameState.initialDistance = parseFloat(initialDistanceInput.value);
+    gameState.objectA.speed = parseFloat(speedAInput.value) * gameState.speedScale;
+    gameState.objectB.speed = parseFloat(speedBInput.value) * gameState.speedScale;
+    gameState.initialDistance = parseFloat(initialDistanceInput.value) * gameState.speedScale;
     
     // 设置初始位置 - 现在基于车辆中心点
-    gameState.objectA.x = 80; // 红色车中心位置
-    gameState.objectB.x = 80 + gameState.initialDistance; // 蓝色车中心位置
+    gameState.objectA.x = 80; // 红车中心点位置
+    gameState.objectB.x = 80 + gameState.initialDistance; // 蓝车中心点位置
     
     // 计算预测相遇时间
-    if (gameState.objectA.speed > gameState.objectB.speed) {
-        gameState.predictedTime = gameState.initialDistance / (gameState.objectA.speed - gameState.objectB.speed);
-        predictionDisplay.textContent = `预计相遇时间: ${gameState.predictedTime.toFixed(2)} 秒`;
-    } else if (gameState.objectA.speed <= gameState.objectB.speed) {
-        predictionDisplay.textContent = '预计相遇时间: 永远不会相遇';
-    }
+    calculatePrediction();
     
     // 更新显示
     timeDisplay.textContent = `时间: 0.00 秒`;
-    distanceDisplay.textContent = `距离: ${gameState.initialDistance.toFixed(0)}`;
+    distanceDisplay.textContent = `距离: ${(gameState.initialDistance / gameState.speedScale).toFixed(0)}`;
     
     // 绘制初始状态
     drawScene();
@@ -119,7 +115,7 @@ function gameLoop(timestamp) {
     // 更新显示
     if (!gameState.hasMet) {
         timeDisplay.textContent = `时间: ${gameState.elapsedTime.toFixed(2)} 秒`;
-        distanceDisplay.textContent = `距离: ${Math.max(0, parseInt(currentDistance))}`;
+        distanceDisplay.textContent = `距离: ${Math.max(0, parseInt(currentDistance / gameState.speedScale))}`;
     }
     
     // 绘制场景
@@ -212,7 +208,7 @@ function drawScene() {
             ctx.font = '12px Arial';
             ctx.fillStyle = '#2c3e50';
             ctx.textAlign = 'center';
-            ctx.fillText(`${distance.toFixed(0)}`, midX, gameState.objectA.y - 40);
+            ctx.fillText(`${(distance / gameState.speedScale).toFixed(0)}`, midX, gameState.objectA.y - 40);
         }
     }
 }
@@ -334,7 +330,7 @@ function drawCar(x, y, width, height, color, label) {
     
     // 绘制速度信息
     if (gameState.isRunning) {
-        const speed = label === '红车' ? gameState.objectA.speed : gameState.objectB.speed;
+        const speed = label === '红车' ? gameState.objectA.speed / gameState.speedScale : gameState.objectB.speed / gameState.speedScale;
         ctx.font = 'bold 12px Arial';
         ctx.fillStyle = '#fff';
         ctx.textAlign = 'center';
@@ -348,6 +344,16 @@ function drawCar(x, y, width, height, color, label) {
     ctx.restore();
 }
 
+// 计算预计相遇时间
+function calculatePrediction() {
+    if (gameState.objectA.speed > gameState.objectB.speed) {
+        gameState.predictedTime = gameState.initialDistance / (gameState.objectA.speed - gameState.objectB.speed);
+        predictionDisplay.textContent = `预计相遇时间: ${gameState.predictedTime.toFixed(2)} 秒`;
+    } else if (gameState.objectA.speed <= gameState.objectB.speed) {
+        predictionDisplay.textContent = '预计相遇时间: 永远不会相遇';
+    }
+}
+
 // 事件监听器
 startBtn.addEventListener('click', startSimulation);
 resetBtn.addEventListener('click', resetSimulation);
@@ -356,6 +362,7 @@ resetBtn.addEventListener('click', resetSimulation);
 speedAInput.addEventListener('input', function() {
     speedAValue.textContent = this.value;
     if (!gameState.isRunning) {
+        gameState.objectA.speed = parseFloat(this.value) * gameState.speedScale;
         resetSimulation();
     }
 });
@@ -363,6 +370,7 @@ speedAInput.addEventListener('input', function() {
 speedBInput.addEventListener('input', function() {
     speedBValue.textContent = this.value;
     if (!gameState.isRunning) {
+        gameState.objectB.speed = parseFloat(this.value) * gameState.speedScale;
         resetSimulation();
     }
 });
