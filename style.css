@@ -46,6 +46,84 @@ h1 {
     font-weight: bold;
 }
 
+/* 滑块样式 */
+input[type="range"] {
+    width: 100%;
+    height: 10px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #ddd;
+    outline: none;
+    border-radius: 5px;
+    margin-top: 8px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #3498db;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #3498db;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+input[type="range"]:active::-webkit-slider-thumb {
+    background: #2980b9;
+}
+
+input[type="range"]:active::-moz-range-thumb {
+    background: #2980b9;
+}
+
+#speed-a::-webkit-slider-thumb {
+    background: #e74c3c;
+}
+
+#speed-a::-moz-range-thumb {
+    background: #e74c3c;
+}
+
+#speed-a:active::-webkit-slider-thumb {
+    background: #c0392b;
+}
+
+#speed-a:active::-moz-range-thumb {
+    background: #c0392b;
+}
+
+/* 初始距离滑块使用黑色 */
+#initial-distance::-webkit-slider-thumb {
+    background: #2c3e50;
+}
+
+#initial-distance::-moz-range-thumb {
+    background: #2c3e50;
+}
+
+#initial-distance:active::-webkit-slider-thumb {
+    background: #1a252f;
+}
+
+#initial-distance:active::-moz-range-thumb {
+    background: #1a252f;
+}
+
+.control-group span {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
 .control-group input {
     width: 100%;
     padding: 8px;

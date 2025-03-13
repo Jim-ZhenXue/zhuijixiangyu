@@ -6,6 +6,9 @@ const resetBtn = document.getElementById('reset-btn');
 const speedAInput = document.getElementById('speed-a');
 const speedBInput = document.getElementById('speed-b');
 const initialDistanceInput = document.getElementById('initial-distance');
+const speedAValue = document.getElementById('speed-a-value');
+const speedBValue = document.getElementById('speed-b-value');
+const distanceValue = document.getElementById('distance-value');
 const timeDisplay = document.getElementById('time-display');
 const distanceDisplay = document.getElementById('distance-display');
 const predictionDisplay = document.getElementById('prediction-display');
@@ -324,7 +327,7 @@ function drawCar(x, y, width, height, color, label) {
     ctx.fill();
     
     // 后灯
-    ctx.fillStyle = label === '红车' ? '#ff0000' : '#ff0000';
+    ctx.fillStyle = label === '红车' ? '#ff0000' : '#3498db';
     ctx.beginPath();
     ctx.rect(carX + carLength - carLength * 0.05, carY - carHeight * 0.2, carLength * 0.05, carHeight * 0.2);
     ctx.fill();
@@ -349,10 +352,27 @@ function drawCar(x, y, width, height, color, label) {
 startBtn.addEventListener('click', startSimulation);
 resetBtn.addEventListener('click', resetSimulation);
 
-// 输入值变化时重置游戏
-speedAInput.addEventListener('change', resetSimulation);
-speedBInput.addEventListener('change', resetSimulation);
-initialDistanceInput.addEventListener('change', resetSimulation);
+// 滑块值变化处理
+speedAInput.addEventListener('input', function() {
+    speedAValue.textContent = this.value;
+    if (!gameState.isRunning) {
+        resetSimulation();
+    }
+});
+
+speedBInput.addEventListener('input', function() {
+    speedBValue.textContent = this.value;
+    if (!gameState.isRunning) {
+        resetSimulation();
+    }
+});
+
+initialDistanceInput.addEventListener('input', function() {
+    distanceValue.textContent = this.value;
+    if (!gameState.isRunning) {
+        resetSimulation();
+    }
+});
 
 // 初始化游戏
 initGame();
