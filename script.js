@@ -20,7 +20,7 @@ let gameState = {
     lastTimestamp: 0,
     objectA: {
         x: 0, // 现在这是汽车的中心点x坐标
-        y: canvas.height / 2,
+        y: canvas.height / 2 - 15, // 红车在白线上方，但在灰色区域内
         width: 30,
         height: 20,
         color: '#e74c3c',
@@ -28,7 +28,7 @@ let gameState = {
     },
     objectB: {
         x: 0, // 现在这是汽车的中心点x坐标
-        y: canvas.height / 2,
+        y: canvas.height / 2 + 15, // 蓝车在白线下方，但在灰色区域内
         width: 30,
         height: 20,
         color: '#3498db',
@@ -54,6 +54,9 @@ function initGame() {
     // 设置初始位置 - 现在基于车辆中心点
     gameState.objectA.x = 80; // 红车中心点位置
     gameState.objectB.x = 80 + gameState.initialDistance; // 蓝车中心点位置
+    // 确保Y坐标正确设置，且在灰色道路边界内
+    gameState.objectA.y = canvas.height / 2 - 15; // 红车在白线上方，但在灰色区域内
+    gameState.objectB.y = canvas.height / 2 + 15; // 蓝车在白线下方，但在灰色区域内
     
     // 计算预测相遇时间
     calculatePrediction();
@@ -186,29 +189,32 @@ function drawScene() {
             const carAX = 50 + (gameState.objectA.x - 50) * scale;
             const carBX = 50 + (gameState.objectB.x - 50) * scale;
             const midX = (carAX + carBX) / 2;
+            const lineY = canvas.height / 2 - 40; // 将距离线放在道路上方
             
+            // 绘制水平距离线
             ctx.beginPath();
-            ctx.moveTo(carAX, gameState.objectA.y - 30);
-            ctx.lineTo(carBX, gameState.objectB.y - 30);
+            ctx.moveTo(carAX, lineY);
+            ctx.lineTo(carBX, lineY);
             ctx.strokeStyle = '#2c3e50';
             ctx.lineWidth = 1;
             ctx.stroke();
             
+            // 绘制两端的垂直短线
             ctx.beginPath();
-            ctx.moveTo(carAX, gameState.objectA.y - 35);
-            ctx.lineTo(carAX, gameState.objectA.y - 25);
+            ctx.moveTo(carAX, lineY - 5);
+            ctx.lineTo(carAX, lineY + 5);
             ctx.stroke();
             
             ctx.beginPath();
-            ctx.moveTo(carBX, gameState.objectB.y - 35);
-            ctx.lineTo(carBX, gameState.objectB.y - 25);
+            ctx.moveTo(carBX, lineY - 5);
+            ctx.lineTo(carBX, lineY + 5);
             ctx.stroke();
             
             // 绘制距离文本
-            ctx.font = '12px Arial';
             ctx.fillStyle = '#2c3e50';
+            ctx.font = '12px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText(`${(distance / gameState.speedScale).toFixed(0)}`, midX, gameState.objectA.y - 40);
+            ctx.fillText(`${Math.floor(distance / gameState.speedScale)}`, midX, lineY - 10);
         }
     }
 }
@@ -336,8 +342,8 @@ function drawCar(x, y, width, height, color, label) {
         ctx.textAlign = 'center';
         ctx.strokeStyle = '#000';
         ctx.lineWidth = 3;
-        ctx.strokeText(`${speed} 像素/秒`, carX + carLength/2, carY - carHeight - 10);
-        ctx.fillText(`${speed} 像素/秒`, carX + carLength/2, carY - carHeight - 10);
+        ctx.strokeText(`${speed}`, carX + carLength/2, carY - carHeight - 10);
+        ctx.fillText(`${speed}`, carX + carLength/2, carY - carHeight - 10);
     }
     
     // 恢复之前的状态
