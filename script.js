@@ -18,16 +18,16 @@ let gameState = {
     objectA: {
         x: 0, // 现在这是汽车的中心点x坐标
         y: canvas.height / 2,
-        width: 60,
-        height: 30,
+        width: 30,
+        height: 20,
         color: '#e74c3c',
         speed: 0
     },
     objectB: {
         x: 0, // 现在这是汽车的中心点x坐标
         y: canvas.height / 2,
-        width: 60,
-        height: 30,
+        width: 30,
+        height: 20,
         color: '#3498db',
         speed: 0
     },
