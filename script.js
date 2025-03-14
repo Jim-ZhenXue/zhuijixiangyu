@@ -20,7 +20,7 @@ let gameState = {
     lastTimestamp: 0,
     objectA: {
         x: 0, // 现在这是汽车的中心点x坐标
-        y: canvas.height / 2 - 15, // 红车在白线上方，但在灰色区域内
+        y: canvas.height / 2 - 10, // 红车在白线上方，但在灰色区域内
         width: 30,
         height: 20,
         color: '#e74c3c',
@@ -28,7 +28,7 @@ let gameState = {
     },
     objectB: {
         x: 0, // 现在这是汽车的中心点x坐标
-        y: canvas.height / 2 + 15, // 蓝车在白线下方，但在灰色区域内
+        y: canvas.height / 2 + 10, // 蓝车在白线下方，但在灰色区域内
         width: 30,
         height: 20,
         color: '#3498db',
@@ -58,8 +58,8 @@ function initGame() {
     gameState.objectA.x = 10; // 红车中心点位置
     gameState.objectB.x = 10 + gameState.initialDistance; // 蓝车中心点位置
     // 确保Y坐标正确设置，且在灰色道路边界内
-    gameState.objectA.y = canvas.height / 2 - 15; // 红车在白线上方，但在灰色区域内
-    gameState.objectB.y = canvas.height / 2 + 15; // 蓝车在白线下方，但在灰色区域内
+    gameState.objectA.y = canvas.height / 2 - 10; // 红车在白线上方，但在灰色区域内
+    gameState.objectB.y = canvas.height / 2 + 10; // 蓝车在白线下方，但在灰色区域内
     
     // 计算预测相遇时间
     calculatePrediction();
@@ -142,7 +142,7 @@ function drawScene() {
     
     // 绘制道路
     ctx.fillStyle = '#95a5a6';
-    ctx.fillRect(0, canvas.height / 2 - 25, canvas.width, 50);
+    ctx.fillRect(0, canvas.height / 2 - 20, canvas.width, 40);
     
     // 绘制道路标记线
     ctx.beginPath();
@@ -185,7 +185,7 @@ function drawScene() {
             const carAX = gameState.objectA.x * scale;
             const carBX = gameState.objectB.x * scale;
             const midX = (carAX + carBX) / 2;
-            const lineY = canvas.height / 2 - 70; // 将距离线放在道路上方，向上移动10个像素
+            const lineY = canvas.height / 2 - 40; // 调整距离线的位置，确保在缩小后的画布上仍然可见
             
             // 绘制水平距离线
             ctx.beginPath();
@@ -346,6 +346,17 @@ function drawCar(x, y, width, height, color, label) {
     ctx.restore();
 }
 
+// 计算预测相遇时间
+function calculatePrediction() {
+    // 只有当两车速度不同时才能计算
+    if (gameState.objectA.speed > gameState.objectB.speed) {
+        gameState.predictedTime = gameState.initialDistance * gameState.speedScale / (gameState.objectA.speed - gameState.objectB.speed);
+    } else if (gameState.objectB.speed > gameState.objectA.speed) {
+        // 蓝车更快，红车永远追不上
+    } else {
+        // 速度相同，无法相遇
+    }
+}
 
 // 事件监听器
 startBtn.addEventListener('click', startSimulation);
@@ -355,30 +366,26 @@ resetBtn.addEventListener('click', resetSimulation);
 speedAInput.addEventListener('input', function() {
     speedAValue.textContent = this.value;
     if (!gameState.isRunning) {
-        gameState.objectA.speed = parseFloat(this.value) * gameState.speedScale;
-        resetSimulation();
+        initGame();
     }
 });
 
 speedBInput.addEventListener('input', function() {
     speedBValue.textContent = this.value;
     if (!gameState.isRunning) {
-        gameState.objectB.speed = parseFloat(this.value) * gameState.speedScale;
-        resetSimulation();
+        initGame();
     }
 });
 
 initialDistanceInput.addEventListener('input', function() {
     distanceValue.textContent = this.value;
     if (!gameState.isRunning) {
-        gameState.initialDistance = parseFloat(this.value);
-        if (gameState.objectA) {
-            gameState.objectB.x = gameState.objectA.x + gameState.initialDistance;
-            calculatePrediction();
-            drawScene();
-        }
+        initGame();
     }
 });
 
-// 初始化游戏
-initGame();
+// 在页面加载完成后初始化游戏
+window.addEventListener('DOMContentLoaded', function() {
+    // 确保初始化游戏并绘制道路
+    initGame();
+});
