@@ -15,7 +15,7 @@ body {
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;
-    padding-top: 35px; /* 增加上方内边距，原20px + 15px */
+    padding-top: 40px; /* 增加上方内边距，原20px + 15px */
 }
 
 h1 {
@@ -28,10 +28,10 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 0; /* 移除底部边距，使控制区域与信息栏贴合 */
     padding: 15px;
     background-color: #333333;
-    border-radius: 5px;
+    border-radius: 5px 5px 0 0; /* 修改底部圆角，使其与信息栏贴合 */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 
@@ -174,7 +174,7 @@ button {
     padding: 10px;
     background-color: #3498db;
     color: white;
-    border-radius: 5px;
+    border-radius: 0 0 5px 5px; /* 修改顶部圆角，使其与控制区域贴合 */
 }
 
 #game-canvas {
