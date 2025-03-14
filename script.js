@@ -13,6 +13,50 @@ const timeDisplay = document.getElementById('time-display');
 const distanceDisplay = document.getElementById('distance-display');
 const predictionDisplay = document.getElementById('prediction-display');
 
+// 音效系统
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+// 创建音效函数
+function createSound(type, frequency, duration) {
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.type = type; // 'sine', 'square', 'sawtooth', 'triangle'
+    oscillator.frequency.value = frequency; // 频率，单位是赫兹
+    
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime); // 设置音量
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + duration);
+    
+    return oscillator;
+}
+
+// 预定义音效
+function playStartSound() {
+    createSound('sine', 440, 0.2); // A4音符
+    setTimeout(() => createSound('sine', 523.25, 0.2), 200); // C5音符
+}
+
+function playResetSound() {
+    createSound('sine', 523.25, 0.2); // C5音符
+    setTimeout(() => createSound('sine', 440, 0.2), 200); // A4音符
+}
+
+function playMeetSound() {
+    createSound('square', 660, 0.3); // E5音符
+    setTimeout(() => createSound('square', 880, 0.5), 300); // A5音符
+}
+
+function playEngineSound(speed) {
+    const baseFreq = 100 + speed * 20;
+    createSound('sawtooth', baseFreq, 0.2);
+}
+
 // 游戏状态
 let gameState = {
     isRunning: false,
@@ -38,7 +82,8 @@ let gameState = {
     predictedTime: 0,
     hasMet: false,
     speedScale: 10, // 速度缩放因子
-    roadLength: 100 // 道路总长度设置为100单位
+    roadLength: 100, // 道路总长度设置为100单位
+    engineSoundTimer: null // 引擎声音计时器
 };
 
 // 初始化游戏
@@ -70,20 +115,51 @@ function initGame() {
     
     // 绘制初始状态
     drawScene();
+    
+    // 清除引擎声音计时器
+    if (gameState.engineSoundTimer) {
+        clearInterval(gameState.engineSoundTimer);
+        gameState.engineSoundTimer = null;
+    }
 }
 
 // 开始模拟
 function startSimulation() {
     if (gameState.isRunning) return;
     
+    // 播放开始音效
+    playStartSound();
+    
     gameState.isRunning = true;
     gameState.lastTimestamp = performance.now();
     requestAnimationFrame(gameLoop);
+    
+    // 启动引擎声音
+    gameState.engineSoundTimer = setInterval(() => {
+        if (gameState.isRunning) {
+            playEngineSound(gameState.objectA.speed / gameState.speedScale);
+            setTimeout(() => {
+                if (gameState.isRunning) {
+                    playEngineSound(gameState.objectB.speed / gameState.speedScale);
+                }
+            }, 100);
+        }
+    }, 1000);
 }
 
 // 重置模拟
 function resetSimulation() {
+    // 播放重置音效
+    playResetSound();
+    
     gameState.isRunning = false;
+    
+    // 清除引擎声音计时器
+    if (gameState.engineSoundTimer) {
+        clearInterval(gameState.engineSoundTimer);
+        gameState.engineSoundTimer = null;
+    }
+    
     initGame();
 }
 
@@ -111,12 +187,21 @@ function gameLoop(timestamp) {
         // 在相遇时暂停模拟
         gameState.isRunning = false;
         
+        // 播放相遇音效
+        playMeetSound();
+        
         timeDisplay.textContent = `相遇时间: ${Math.round(gameState.elapsedTime)} 秒`;
         
         // 计算理论相遇时间与实际相遇时间的误差
         if (gameState.objectA.speed > gameState.objectB.speed) {
             const theoreticalTime = gameState.initialDistance * gameState.speedScale / (gameState.objectA.speed - gameState.objectB.speed);
             const error = Math.abs(gameState.elapsedTime - theoreticalTime);
+        }
+        
+        // 清除引擎声音计时器
+        if (gameState.engineSoundTimer) {
+            clearInterval(gameState.engineSoundTimer);
+            gameState.engineSoundTimer = null;
         }
     }
     
