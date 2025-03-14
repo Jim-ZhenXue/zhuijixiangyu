@@ -185,7 +185,7 @@ function drawScene() {
             const carAX = gameState.objectA.x * scale;
             const carBX = gameState.objectB.x * scale;
             const midX = (carAX + carBX) / 2;
-            const lineY = canvas.height / 2 - 40; // 调整距离线的位置，确保在缩小后的画布上仍然可见
+            const lineY = canvas.height / 2 - 60; // 距离线上移10个像素
             
             // 绘制水平距离线
             ctx.beginPath();
