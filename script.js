@@ -37,7 +37,8 @@ let gameState = {
     initialDistance: 0,
     predictedTime: 0,
     hasMet: false,
-    speedScale: 30 // 速度缩放因子，使较小的速度值在视觉上更明显
+    speedScale: 10, // 速度缩放因子
+    roadLength: 100 // 道路总长度设置为100单位
 };
 
 // 初始化游戏
@@ -49,11 +50,13 @@ function initGame() {
     // 获取用户输入的参数
     gameState.objectA.speed = parseFloat(speedAInput.value) * gameState.speedScale;
     gameState.objectB.speed = parseFloat(speedBInput.value) * gameState.speedScale;
-    gameState.initialDistance = parseFloat(initialDistanceInput.value) * gameState.speedScale;
+    
+    // 设置初始距离 - 不再乘以speedScale，直接使用用户输入的值作为单位距离
+    gameState.initialDistance = parseFloat(initialDistanceInput.value);
     
     // 设置初始位置 - 现在基于车辆中心点
-    gameState.objectA.x = 80; // 红车中心点位置
-    gameState.objectB.x = 80 + gameState.initialDistance; // 蓝车中心点位置
+    gameState.objectA.x = 10; // 红车中心点位置
+    gameState.objectB.x = 10 + gameState.initialDistance; // 蓝车中心点位置
     // 确保Y坐标正确设置，且在灰色道路边界内
     gameState.objectA.y = canvas.height / 2 - 15; // 红车在白线上方，但在灰色区域内
     gameState.objectB.y = canvas.height / 2 + 15; // 蓝车在白线下方，但在灰色区域内
@@ -63,7 +66,7 @@ function initGame() {
     
     // 更新显示
     timeDisplay.textContent = `时间: 0.00 秒`;
-    distanceDisplay.textContent = `距离: ${(gameState.initialDistance / gameState.speedScale).toFixed(0)}`;
+    distanceDisplay.textContent = `距离: ${gameState.initialDistance.toFixed(0)}`;
     
     // 绘制初始状态
     drawScene();
@@ -96,20 +99,20 @@ function gameLoop(timestamp) {
     gameState.elapsedTime += deltaTime;
     
     // 更新位置 - 中心点位置更新
-    gameState.objectA.x += gameState.objectA.speed * deltaTime;
-    gameState.objectB.x += gameState.objectB.speed * deltaTime;
+    gameState.objectA.x += gameState.objectA.speed * deltaTime / gameState.speedScale;
+    gameState.objectB.x += gameState.objectB.speed * deltaTime / gameState.speedScale;
     
     // 计算当前距离 - 基于中心点计算
     const currentDistance = gameState.objectB.x - gameState.objectA.x;
     
     // 检查是否相遇 - 当两车中心点距离小于它们半宽之和时认为相遇
-    if (Math.abs(currentDistance) <= (gameState.objectA.width + gameState.objectB.width) / 2 && !gameState.hasMet) {
+    if (Math.abs(currentDistance) <= (gameState.objectA.width + gameState.objectB.width) / 2 / gameState.speedScale && !gameState.hasMet) {
         gameState.hasMet = true;
         timeDisplay.textContent = `相遇时间: ${gameState.elapsedTime.toFixed(2)} 秒`;
         
         // 计算理论相遇时间与实际相遇时间的误差
         if (gameState.objectA.speed > gameState.objectB.speed) {
-            const theoreticalTime = gameState.initialDistance / (gameState.objectA.speed - gameState.objectB.speed);
+            const theoreticalTime = gameState.initialDistance * gameState.speedScale / (gameState.objectA.speed - gameState.objectB.speed);
             const error = Math.abs(gameState.elapsedTime - theoreticalTime);
             predictionDisplay.textContent = `理论相遇时间: ${theoreticalTime.toFixed(2)}秒 (误差: ${error.toFixed(2)}秒)`;
         }
@@ -118,7 +121,7 @@ function gameLoop(timestamp) {
     // 更新显示
     if (!gameState.hasMet) {
         timeDisplay.textContent = `时间: ${gameState.elapsedTime.toFixed(2)} 秒`;
-        distanceDisplay.textContent = `距离: ${Math.max(0, parseInt(currentDistance / gameState.speedScale))}`;
+        distanceDisplay.textContent = `距离: ${Math.max(0, parseInt(currentDistance))}`;
     }
     
     // 绘制场景
@@ -151,21 +154,14 @@ function drawScene() {
     ctx.stroke();
     ctx.setLineDash([]);
     
-    // 计算可见区域
-    const visibleWidth = canvas.width - 100;
-    const maxX = Math.max(gameState.objectA.x, gameState.objectB.x);
-    const minX = Math.min(gameState.objectA.x, gameState.objectB.x);
-    const viewportWidth = Math.max(maxX - minX + 200, 500);
-    const scale = visibleWidth / viewportWidth;
-    
-    // 计算缩放后的位置
-    const offsetX = 50 - minX * scale;
+    // 计算显示比例 - 将游戏中的100单位长度映射到画布宽度
+    const scale = canvas.width / gameState.roadLength;
     
     // 绘制红色车
     drawCar(
-        50 + (gameState.objectA.x - 50) * scale,
+        gameState.objectA.x * scale,
         gameState.objectA.y, 
-        gameState.objectA.width * scale, 
+        gameState.objectA.width, 
         gameState.objectA.height, 
         gameState.objectA.color,
         '红车'
@@ -173,9 +169,9 @@ function drawScene() {
     
     // 绘制蓝色车
     drawCar(
-        50 + (gameState.objectB.x - 50) * scale,
+        gameState.objectB.x * scale,
         gameState.objectB.y, 
-        gameState.objectB.width * scale, 
+        gameState.objectB.width, 
         gameState.objectB.height, 
         gameState.objectB.color,
         '蓝车'
@@ -186,8 +182,8 @@ function drawScene() {
         const distance = gameState.objectB.x - gameState.objectA.x;
         if (distance > 0) {
             // 显示两车中心点之间的距离线
-            const carAX = 50 + (gameState.objectA.x - 50) * scale;
-            const carBX = 50 + (gameState.objectB.x - 50) * scale;
+            const carAX = gameState.objectA.x * scale;
+            const carBX = gameState.objectB.x * scale;
             const midX = (carAX + carBX) / 2;
             const lineY = canvas.height / 2 - 40; // 将距离线放在道路上方
             
@@ -214,7 +210,7 @@ function drawScene() {
             ctx.fillStyle = '#2c3e50';
             ctx.font = '12px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText(`${Math.floor(distance / gameState.speedScale)}`, midX, lineY - 10);
+            ctx.fillText(`${Math.floor(distance)}`, midX, lineY - 10);
         }
     }
 }
@@ -353,10 +349,10 @@ function drawCar(x, y, width, height, color, label) {
 // 计算预计相遇时间
 function calculatePrediction() {
     if (gameState.objectA.speed > gameState.objectB.speed) {
-        gameState.predictedTime = gameState.initialDistance / (gameState.objectA.speed - gameState.objectB.speed);
+        gameState.predictedTime = gameState.initialDistance * gameState.speedScale / (gameState.objectA.speed - gameState.objectB.speed);
         predictionDisplay.textContent = `预计相遇时间: ${gameState.predictedTime.toFixed(2)} 秒`;
     } else if (gameState.objectA.speed <= gameState.objectB.speed) {
-        predictionDisplay.textContent = '预计相遇时间: 永远不会相遇';
+        predictionDisplay.textContent = `预计相遇时间: 永不相遇`;
     }
 }
 
@@ -384,7 +380,12 @@ speedBInput.addEventListener('input', function() {
 initialDistanceInput.addEventListener('input', function() {
     distanceValue.textContent = this.value;
     if (!gameState.isRunning) {
-        resetSimulation();
+        gameState.initialDistance = parseFloat(this.value);
+        if (gameState.objectA) {
+            gameState.objectB.x = gameState.objectA.x + gameState.initialDistance;
+            calculatePrediction();
+            drawScene();
+        }
     }
 });
 
