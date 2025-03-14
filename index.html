@@ -8,8 +8,6 @@
 </head>
 <body>
     <div class="container">
-        <h1>追及相遇问题模拟器</h1>
-        
         <div class="game-controls">
             <div class="control-group">
                 <label for="speed-a">红色车速度: <span id="speed-a-value">3</span></label>
@@ -39,20 +37,7 @@
         </div>
         
         <canvas id="game-canvas" width="1000" height="400"></canvas>
-        
-        <div class="explanation">
-            <h2>追及相遇问题说明</h2>
-            <p>假设两辆车在同一直线上运动：</p>
-            <ul>
-                <li>红色车以恒定速度v<sub>1</sub>追赶蓝色车</li>
-                <li>蓝色车以恒定速度v<sub>2</sub>向前运动</li>
-                <li>初始时蓝色车在红色车的前方，距离为s</li>
-            </ul>
-            <p>如果v<sub>1</sub> > v<sub>2</sub>，红色车最终会追上蓝色车。相遇时间t = s/(v<sub>1</sub> - v<sub>2</sub>)</p>
-            <p>此模拟器可视化了这一过程，并实时计算相遇时间和位置。</p>
-        </div>
     </div>
-    
     <script src="script.js"></script>
 </body>
 </html>
