@@ -2,12 +2,20 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>追及相遇问题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
 </head>
 <body>
     <div class="container">
+        <!-- 返回按钮 -->
+        <div class="back-button" onclick="wx.miniProgram.navigateBack()">
+            <i class="fas fa-home"></i>
+        </div>
         <div class="game-controls">
             <div class="control-group">
                 <label for="speed-a">红色车速度: <span id="speed-a-value">3</span></label>

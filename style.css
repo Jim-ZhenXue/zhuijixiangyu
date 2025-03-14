@@ -202,3 +202,31 @@ button {
     margin-left: 20px;
     margin-bottom: 10px;
 }
+
+
+.back-button {
+    position: fixed;
+    top: calc(env(safe-area-inset-top) + 20px);
+    left: 20px;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    transition: opacity 0.3s ease;
+}
+
+.back-button:hover {
+    opacity: 0.8;
+    transform: none;
+    box-shadow: none;
+}
+
+.back-button i {
+    color: white;
+    font-size: 12px;
+}
