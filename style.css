@@ -15,7 +15,7 @@ body {
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;
-    padding-top: 40px; /* 增加上方内边距，原20px + 15px */
+    padding-top: 50px; /* 增加上方内边距，原20px + 30px */
 }
 
 h1 {
