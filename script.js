@@ -105,9 +105,12 @@ function gameLoop(timestamp) {
     // 计算当前距离 - 基于中心点计算
     const currentDistance = gameState.objectB.x - gameState.objectA.x;
     
-    // 检查是否相遇 - 当两车中心点距离小于它们半宽之和时认为相遇
-    if (Math.abs(currentDistance) <= (gameState.objectA.width + gameState.objectB.width) / 2 / gameState.speedScale && !gameState.hasMet) {
+    // 检查是否相遇 - 当两车中心点完全重合时才算相遇（允许0.05的误差）
+    if (Math.abs(currentDistance) < 0.05 && !gameState.hasMet) {
         gameState.hasMet = true;
+        // 在相遇时暂停模拟
+        gameState.isRunning = false;
+        
         timeDisplay.textContent = `相遇时间: ${gameState.elapsedTime.toFixed(2)} 秒`;
         
         // 计算理论相遇时间与实际相遇时间的误差
@@ -127,10 +130,8 @@ function gameLoop(timestamp) {
     // 绘制场景
     drawScene();
     
-    // 检查是否应该继续模拟
-    if (gameState.hasMet && gameState.elapsedTime > gameState.predictedTime + 2) {
-        gameState.isRunning = false;
-    } else {
+    // 只有当模拟仍在运行时才继续请求下一帧
+    if (gameState.isRunning) {
         requestAnimationFrame(gameLoop);
     }
 }
