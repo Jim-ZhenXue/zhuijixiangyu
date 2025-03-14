@@ -362,6 +362,18 @@ function calculatePrediction() {
 startBtn.addEventListener('click', startSimulation);
 resetBtn.addEventListener('click', resetSimulation);
 
+// 禁止页面滚动
+document.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+}, { passive: false });
+
+// 禁止双击缩放
+document.addEventListener('touchstart', function(e) {
+    if (e.touches.length > 1) {
+        e.preventDefault();
+    }
+}, { passive: false });
+
 // 滑块值变化处理
 speedAInput.addEventListener('input', function() {
     speedAValue.textContent = this.value;
