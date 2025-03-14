@@ -65,7 +65,7 @@ function initGame() {
     calculatePrediction();
     
     // 更新显示
-    timeDisplay.textContent = `时间: 0.00 秒`;
+    timeDisplay.textContent = `时间: 0 秒`;
     distanceDisplay.textContent = `距离: ${gameState.initialDistance.toFixed(0)}`;
     
     // 绘制初始状态
@@ -111,19 +111,18 @@ function gameLoop(timestamp) {
         // 在相遇时暂停模拟
         gameState.isRunning = false;
         
-        timeDisplay.textContent = `相遇时间: ${gameState.elapsedTime.toFixed(2)} 秒`;
+        timeDisplay.textContent = `相遇时间: ${Math.round(gameState.elapsedTime)} 秒`;
         
         // 计算理论相遇时间与实际相遇时间的误差
         if (gameState.objectA.speed > gameState.objectB.speed) {
             const theoreticalTime = gameState.initialDistance * gameState.speedScale / (gameState.objectA.speed - gameState.objectB.speed);
             const error = Math.abs(gameState.elapsedTime - theoreticalTime);
-            predictionDisplay.textContent = `理论相遇时间: ${theoreticalTime.toFixed(2)}秒 (误差: ${error.toFixed(2)}秒)`;
         }
     }
     
     // 更新显示
     if (!gameState.hasMet) {
-        timeDisplay.textContent = `时间: ${gameState.elapsedTime.toFixed(2)} 秒`;
+        timeDisplay.textContent = `时间: ${Math.round(gameState.elapsedTime)} 秒`;
         distanceDisplay.textContent = `距离: ${Math.max(0, parseInt(currentDistance))}`;
     }
     
@@ -347,15 +346,6 @@ function drawCar(x, y, width, height, color, label) {
     ctx.restore();
 }
 
-// 计算预计相遇时间
-function calculatePrediction() {
-    if (gameState.objectA.speed > gameState.objectB.speed) {
-        gameState.predictedTime = gameState.initialDistance * gameState.speedScale / (gameState.objectA.speed - gameState.objectB.speed);
-        predictionDisplay.textContent = `预计相遇时间: ${gameState.predictedTime.toFixed(2)} 秒`;
-    } else if (gameState.objectA.speed <= gameState.objectB.speed) {
-        predictionDisplay.textContent = `预计相遇时间: 永不相遇`;
-    }
-}
 
 // 事件监听器
 startBtn.addEventListener('click', startSimulation);
