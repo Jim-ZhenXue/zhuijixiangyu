@@ -21,7 +21,7 @@ body {
 }
 
 .container {
-    max-width: 900px;
+    max-width: 720px; /* 减少20%，从900px到720px */
     margin: 0 auto;
     padding: 20px;
     padding-top: 50px; /* 增加上方内边距，原20px + 30px */
@@ -46,7 +46,7 @@ h1 {
 
 .control-group {
     margin-bottom: 10px;
-    flex: 1 0 200px;
+    flex: 1 0 160px; /* 减少20%，从200px到160px */
     margin-right: 10px;
 }
 
@@ -145,16 +145,16 @@ input[type="range"]:active::-moz-range-thumb {
 .button-group {
     display: flex;
     gap: 10px;
-    flex: 1 0 200px;
+    flex: 1 0 160px; /* 减少20%，从200px到160px */
     align-items: flex-end;
 }
 
 button {
-    padding: 8px 15px;
+    padding: 6px 12px; /* 减小按钮内边距 */
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px; /* 减小字体大小 */
     transition: background-color 0.3s;
 }
 
@@ -180,10 +180,11 @@ button {
     display: flex;
     justify-content: space-between;
     margin-bottom: 15px;
-    padding: 10px;
+    padding: 8px; /* 减小内边距 */
     background-color: #3498db;
     color: white;
     border-radius: 0 0 5px 5px; /* 修改顶部圆角，使其与控制区域贴合 */
+    font-size: 14px; /* 减小字体大小 */
 }
 
 #game-canvas {
